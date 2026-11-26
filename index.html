@@ -1,0 +1,1736 @@
+<!DOCTYPE html>
+<html lang="ms" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EDUP6023 Topik 8 — Trend Teknologi, Isu dan Cabaran Pengintegrasian Teknologi dalam PdP</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+          },
+          colors: {
+            indigoEdu: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              200: '#c7d2fe',
+              300: '#a5b4fc',
+              400: '#818cf8',
+              500: '#6366f1',
+              700: '#4338ca',
+              800: '#3730a3',
+              900: '#312e81',
+              950: '#1e1b4b',
+            },
+            tealEdu: {
+              50: '#f0fdfa',
+              100: '#ccfbf1',
+              200: '#99f6e4',
+              300: '#5eead4',
+              400: '#2dd4bf',
+              500: '#14b8a6',
+              700: '#0f766e',
+            },
+            amberWarm: {
+              100: '#fef3c7',
+              200: '#fde68a',
+              300: '#fcd34d',
+              700: '#b45309',
+            }
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      min-height: 100%;
+      overflow-x: hidden;
+      background-color: #f8fafc;
+      color: #0f172a;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    /* Full-bleed canvas inside hero */
+    #kinetic-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      z-index: 0;
+      touch-action: pan-y;
+    }
+
+    /* Kinetic CSS animations for orbital rings, waves, and hero entrance */
+    @keyframes spinClockwise {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes spinCounter {
+      from { transform: rotate(360deg); }
+      to { transform: rotate(0deg); }
+    }
+
+    @keyframes waveDriftA {
+      0%, 100% { transform: translateX(0%) translateY(0px); }
+      50% { transform: translateX(-3.5%) translateY(8px); }
+    }
+
+    @keyframes waveDriftB {
+      0%, 100% { transform: translateX(0%) translateY(0px); }
+      50% { transform: translateX(3.5%) translateY(-8px); }
+    }
+
+    @keyframes floatSoft {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-6px); }
+    }
+
+    @keyframes heroReveal {
+      from {
+        opacity: 0;
+        transform: translateY(16px) scale(0.985);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes pulseDot {
+      0%, 80%, 100% { transform: scale(0.7); opacity: 0.45; }
+      40% { transform: scale(1.15); opacity: 1; }
+    }
+
+    .orbit-cw {
+      animation: spinClockwise var(--orbit-cw-dur, 28s) linear infinite;
+      transform-origin: center;
+    }
+
+    .orbit-ccw {
+      animation: spinCounter var(--orbit-ccw-dur, 40s) linear infinite;
+      transform-origin: center;
+    }
+
+    .wave-a {
+      animation: waveDriftA var(--wave-dur, 9s) ease-in-out infinite;
+    }
+
+    .wave-b {
+      animation: waveDriftB var(--wave-dur-alt, 11s) ease-in-out infinite;
+    }
+
+    .float-badge {
+      animation: floatSoft var(--float-dur, 4.6s) ease-in-out infinite;
+    }
+
+    .hero-enter {
+      animation: heroReveal 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .typing-dot {
+      animation: pulseDot 1.3s infinite ease-in-out;
+    }
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+    /* Paused state */
+    .motion-paused .orbit-cw,
+    .motion-paused .orbit-ccw,
+    .motion-paused .wave-a,
+    .motion-paused .wave-b,
+    .motion-paused .float-badge {
+      animation-play-state: paused !important;
+    }
+
+    /* Reduced motion accessibility mode */
+    .motion-reduced .orbit-cw,
+    .motion-reduced .orbit-ccw,
+    .motion-reduced .wave-a,
+    .motion-reduced .wave-b,
+    .motion-reduced .float-badge,
+    .motion-reduced .hero-enter,
+    .motion-reduced .typing-dot {
+      animation: none !important;
+      opacity: 1 !important;
+      transform: none !important;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .orbit-cw,
+      .orbit-ccw,
+      .wave-a,
+      .wave-b,
+      .float-badge,
+      .hero-enter,
+      .typing-dot {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 antialiased selection:bg-indigo-200 selection:text-indigo-950">
+
+  <!-- 1. TOP NAVIGATION BAR WITH QUICK LINKS & KINETIC MOTION CONTROLS -->
+  <header class="sticky top-0 z-40 w-full bg-slate-950/90 backdrop-blur-md border-b border-white/10 text-white shadow-md">
+    <div class="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8 py-2.5 flex flex-wrap items-center justify-between gap-2.5">
+      <!-- Brand / Course Badge -->
+      <a href="#utama" class="flex items-center gap-2.5 shrink-0 group">
+        <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-indigoEdu-500 to-tealEdu-400 flex items-center justify-center text-slate-950 font-extrabold text-xs shadow-sm group-hover:scale-105 transition-transform">
+          E8
+        </span>
+        <div class="leading-tight">
+          <span class="block text-[10px] font-bold uppercase tracking-wider text-tealEdu-300">EDUP6023 • Topik 8</span>
+          <span class="block text-xs sm:text-sm font-bold text-white">Teknologi PdP</span>
+        </div>
+      </a>
+
+      <!-- Quick Navigation Links -->
+      <nav aria-label="Navigasi utama" class="hidden xl:flex items-center gap-1 text-xs font-semibold">
+        <a href="#utama" class="px-2.5 py-1.5 rounded-lg text-slate-200 hover:text-white hover:bg-white/10 transition-colors">Utamanya</a>
+        <a href="#tugasan-1" class="px-2.5 py-1.5 rounded-lg text-slate-200 hover:text-white hover:bg-white/10 transition-colors">Tugasan 1</a>
+        <a href="#tugasan-2" class="px-2.5 py-1.5 rounded-lg text-slate-200 hover:text-white hover:bg-white/10 transition-colors">Tugasan 2</a>
+        <a href="#kuiz-formatif" class="px-2.5 py-1.5 rounded-lg text-slate-200 hover:text-white hover:bg-white/10 transition-colors">Kuiz Formatif</a>
+        <a href="#rumusan" class="px-2.5 py-1.5 rounded-lg text-slate-200 hover:text-white hover:bg-white/10 transition-colors">Rumusan</a>
+        <a href="#ai-chatbox" class="px-2.5 py-1.5 rounded-lg text-tealEdu-200 hover:text-white hover:bg-tealEdu-500/20 border border-tealEdu-400/30 transition-colors">AI Chatbox</a>
+      </nav>
+
+      <!-- Kinetic Motion Controls -->
+      <div class="flex flex-wrap items-center gap-1.5" role="group" aria-label="Kawalan animasi kinetik">
+        <button
+          id="btn-play-pause"
+          type="button"
+          aria-pressed="false"
+          class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-xs font-semibold text-white transition-colors cursor-pointer"
+          title="Main atau Jeda Animasi"
+        >
+          <span id="play-pause-icon" aria-hidden="true">❚❚</span>
+          <span id="play-pause-label">Jeda</span>
+        </button>
+
+        <button
+          id="btn-speed"
+          type="button"
+          class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-xs font-semibold text-tealEdu-200 transition-colors cursor-pointer"
+          title="Tukar Kelajuan Animasi"
+        >
+          <span class="hidden sm:inline">Kelajuan</span>
+          <span id="speed-label" class="font-bold text-white">1.0x</span>
+        </button>
+
+        <button
+          id="btn-burst"
+          type="button"
+          class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-amberWarm-200 hover:bg-amberWarm-100 text-slate-950 text-xs font-bold transition-colors cursor-pointer"
+          title="Cetus Ledakan Partikel Kinetik"
+        >
+          <span aria-hidden="true">✦</span>
+          <span>Ledakan</span>
+        </button>
+
+        <button
+          id="btn-reduced-motion"
+          type="button"
+          aria-pressed="false"
+          class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-white/15 text-xs font-semibold text-indigoEdu-300 transition-colors cursor-pointer"
+          title="Mod Kurang Gerakan"
+        >
+          <span id="reduced-motion-label">Kurang Gerakan</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Compact Mobile / Tablet Quick Anchor Strip -->
+    <div class="xl:hidden border-t border-white/10 bg-slate-950/95 px-3 py-1.5 flex items-center gap-1.5 overflow-x-auto text-xs font-semibold">
+      <a href="#utama" class="px-2.5 py-1 rounded-lg bg-white/5 text-slate-200 hover:bg-white/15 whitespace-nowrap">Utamanya</a>
+      <a href="#tugasan-1" class="px-2.5 py-1 rounded-lg bg-white/5 text-slate-200 hover:bg-white/15 whitespace-nowrap">Tugasan 1</a>
+      <a href="#tugasan-2" class="px-2.5 py-1 rounded-lg bg-white/5 text-slate-200 hover:bg-white/15 whitespace-nowrap">Tugasan 2</a>
+      <a href="#kuiz-formatif" class="px-2.5 py-1 rounded-lg bg-white/5 text-slate-200 hover:bg-white/15 whitespace-nowrap">Kuiz Formatif</a>
+      <a href="#rumusan" class="px-2.5 py-1 rounded-lg bg-white/5 text-slate-200 hover:bg-white/15 whitespace-nowrap">Rumusan</a>
+      <a href="#ai-chatbox" class="px-2.5 py-1 rounded-lg bg-tealEdu-500/20 text-tealEdu-200 border border-tealEdu-400/30 whitespace-nowrap">AI Chatbox</a>
+    </div>
+  </header>
+
+  <!-- 2. ANIMATED KINETIC HOMEPAGE / HERO SECTION -->
+  <section id="utama" class="relative min-h-[82vh] sm:min-h-[88vh] w-full bg-[#0b1026] text-white flex flex-col justify-between overflow-hidden px-4 sm:px-8 py-10 sm:py-14">
+    <!-- Full-Bleed Kinetic Canvas -->
+    <canvas id="kinetic-canvas" aria-hidden="true"></canvas>
+
+    <!-- SVG Orbital & Wave Overlay Layer -->
+    <div id="svg-motion-layer" class="pointer-events-none absolute inset-0 z-10 flex items-center justify-center overflow-hidden" aria-hidden="true">
+      <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(99,102,241,0.18)_0%,rgba(20,184,166,0.09)_44%,rgba(11,16,38,0.72)_100%)]"></div>
+
+      <!-- Orbital SVG Rings -->
+      <svg class="w-[min(86vw,540px)] h-[min(86vw,540px)] opacity-55" viewBox="0 0 600 600" fill="none">
+        <g class="orbit-cw">
+          <circle cx="300" cy="300" r="245" stroke="url(#gradOrbitA)" stroke-width="1.5" stroke-dasharray="10 8" />
+          <circle cx="300" cy="55" r="6" fill="#fde68a" />
+          <circle cx="512" cy="422" r="5" fill="#5eead4" />
+          <circle cx="88" cy="422" r="5" fill="#a5b4fc" />
+        </g>
+        <g class="orbit-ccw">
+          <circle cx="300" cy="300" r="185" stroke="url(#gradOrbitB)" stroke-width="1.25" stroke-dasharray="4 10" />
+          <circle cx="485" cy="300" r="4.5" fill="#2dd4bf" />
+          <circle cx="115" cy="300" r="4.5" fill="#fcd34d" />
+        </g>
+        <defs>
+          <linearGradient id="gradOrbitA" x1="50" y1="50" x2="550" y2="550" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#a5b4fc" stop-opacity="0.85" />
+            <stop offset="50%" stop-color="#5eead4" stop-opacity="0.75" />
+            <stop offset="100%" stop-color="#fde68a" stop-opacity="0.85" />
+          </linearGradient>
+          <linearGradient id="gradOrbitB" x1="115" y1="115" x2="485" y2="485" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#2dd4bf" stop-opacity="0.75" />
+            <stop offset="100%" stop-color="#818cf8" stop-opacity="0.75" />
+          </linearGradient>
+        </defs>
+      </svg>
+
+      <!-- Bottom Kinetic Wave SVG Ribbons -->
+      <svg class="absolute bottom-0 left-[-6%] w-[112%] h-36 sm:h-48 opacity-45" viewBox="0 0 1440 220" preserveAspectRatio="none" fill="none">
+        <path class="wave-a" d="M0,128 C240,56 480,192 720,124 C960,56 1200,180 1440,112 L1440,220 L0,220 Z" fill="url(#waveGradA)" />
+        <path class="wave-b" d="M0,158 C300,104 540,210 840,148 C1100,94 1280,174 1440,142 L1440,220 L0,220 Z" fill="url(#waveGradB)" />
+        <defs>
+          <linearGradient id="waveGradA" x1="0" y1="0" x2="1440" y2="0" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#4338ca" stop-opacity="0.38" />
+            <stop offset="50%" stop-color="#0d9488" stop-opacity="0.38" />
+            <stop offset="100%" stop-color="#6366f1" stop-opacity="0.38" />
+          </linearGradient>
+          <linearGradient id="waveGradB" x1="0" y1="0" x2="1440" y2="0" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#14b8a6" stop-opacity="0.3" />
+            <stop offset="100%" stop-color="#a5b4fc" stop-opacity="0.3" />
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
+
+    <!-- Top spacer -->
+    <div class="relative z-20"></div>
+
+    <!-- Centered Malay Hero Content & Smooth Scroll CTAs -->
+    <div class="relative z-20 mx-auto max-w-4xl text-center my-auto py-6">
+      <div class="hero-enter space-y-5">
+        <div class="float-badge inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm font-semibold text-tealEdu-200">
+          <span class="w-2 h-2 rounded-full bg-tealEdu-300"></span>
+          <span>EDUP6023 • Teknologi untuk Pengajaran &amp; Pembelajaran</span>
+        </div>
+
+        <h1 class="text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight leading-[1.12] text-white drop-shadow">
+          Trend Teknologi, Isu dan Cabaran Pengintegrasian Teknologi dalam PdP
+        </h1>
+
+        <p class="mx-auto max-w-2xl text-sm sm:text-base md:text-lg text-indigoEdu-200 leading-relaxed">
+          Portal interaktif Topik 8 yang menghimpunkan Panduan Amalan Digital Selamat &amp; Beretika, Klinik Rumusan Cabaran &amp; Strategi PdP, Kuiz Formatif Topik 1–8, serta Pembantu AI Chatbox.
+        </p>
+
+        <!-- Smooth Scroll CTAs -->
+        <div class="pt-2 flex flex-wrap items-center justify-center gap-3">
+          <a href="#tugasan-1" class="px-5 py-3 rounded-xl bg-tealEdu-400 hover:bg-tealEdu-300 text-slate-950 font-bold text-sm shadow-lg transition-all">
+            Terokai Tugasan 1: Etika Digital
+          </a>
+          <a href="#tugasan-2" class="px-5 py-3 rounded-xl bg-white/12 hover:bg-white/20 backdrop-blur-md border border-white/20 text-white font-semibold text-sm transition-all">
+            Klinik Tugasan 2 &amp; Kuiz
+          </a>
+          <a href="#ai-chatbox" class="px-5 py-3 rounded-xl bg-indigoEdu-500 hover:bg-indigoEdu-400 text-white font-bold text-sm shadow-lg transition-all">
+            Tanya AI Chatbox
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Kinetic Hint -->
+    <div class="relative z-20 text-center">
+      <p id="interaction-hint" class="text-xs font-medium text-white/75 tracking-wide">
+        Gerakkan kursor atau sentuh kawasan animasi untuk berinteraksi dengan partikel &amp; gelombang
+      </p>
+    </div>
+  </section>
+
+  <!-- MAIN CONTENT CONTAINER -->
+  <main class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16 space-y-20">
+
+    <!-- 3. TUGASAN 1: PENYEDIAAN PANDUAN DIGITAL BERETIKA -->
+    <section id="tugasan-1" class="scroll-mt-24 space-y-8">
+      <div class="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-6 sm:p-8">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+          <div class="space-y-2 max-w-3xl">
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-indigo-100 text-indigo-800">
+              Tugasan 1 • Google Sites
+            </span>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">
+              Penyediaan Panduan Digital Beretika: Amalan Digital Selamat &amp; Beretika dalam PdP
+            </h2>
+            <p class="text-slate-600 text-sm sm:text-base leading-relaxed">
+              Penggunaan teknologi pendidikan dan kecerdasan buatan (AI) generatif yang meluas menuntut amalan kewarganegaraan digital yang bertanggungjawab. Halaman panduan ini merangkumi amalan utama di bilik darjah, isu berkaitan, garis panduan praktikal, reka bentuk visual Google Sites, serta sumber rujukan untuk dibenamkan pada Google Sites masing-masing.
+            </p>
+          </div>
+
+          <!-- Reading Checklist Progress Tracker -->
+          <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 sm:min-w-[270px] space-y-2.5">
+            <div class="flex items-center justify-between text-xs font-bold text-slate-700">
+              <span>Kemajuan Bacaan Amalan</span>
+              <span id="checklist-count" class="text-indigo-700">0 / 6 Selesai</span>
+            </div>
+            <div class="w-full h-2.5 rounded-full bg-slate-200 overflow-hidden">
+              <div id="checklist-bar" class="h-full bg-gradient-to-r from-indigo-600 to-teal-500 rounded-full transition-all duration-300" style="width: 0%;"></div>
+            </div>
+            <p class="text-[11px] text-slate-500">
+              Tandakan kotak semak pada setiap amalan setelah anda meneliti isu dan garis panduannya.
+            </p>
+          </div>
+        </div>
+
+        <!-- Category Filter Pills -->
+        <div class="mt-6 pt-5 border-t border-slate-100 flex flex-wrap items-center gap-2" role="group" aria-label="Penapis kategori amalan">
+          <span class="text-xs font-bold text-slate-500 mr-1">Tapis Fokus:</span>
+          <button type="button" data-filter="all" class="filter-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-indigo-700 text-white cursor-pointer transition-colors">
+            Semua (6)
+          </button>
+          <button type="button" data-filter="intelegens" class="filter-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer transition-colors">
+            Harta Intelek &amp; AI
+          </button>
+          <button type="button" data-filter="privasi" class="filter-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer transition-colors">
+            Privasi &amp; Maklumat
+          </button>
+          <button type="button" data-filter="kesejahteraan" class="filter-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer transition-colors">
+            Komunikasi &amp; Kesejahteraan
+          </button>
+        </div>
+      </div>
+
+      <!-- 6 Interactive Cards for Amalan Digital Selamat & Beretika -->
+      <div id="ethics-cards-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Populated dynamically via JS for interactive expansion & checklist -->
+      </div>
+
+      <!-- Visual Layout Recommendations for Google Sites & Reference Sources -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Visual Layout Recommendations -->
+        <div class="bg-white rounded-3xl border border-slate-200 p-6 sm:p-7 shadow-sm space-y-4">
+          <div class="flex items-center gap-2.5">
+            <span class="w-9 h-9 rounded-xl bg-teal-100 text-teal-800 flex items-center justify-center font-bold text-sm">🎨</span>
+            <div>
+              <span class="text-[11px] font-bold uppercase tracking-wider text-teal-700">Reka Bentuk Halaman</span>
+              <h3 class="text-lg font-extrabold text-slate-900">Cadangan Susun Atur Visual di Google Sites</h3>
+            </div>
+          </div>
+
+          <ul class="space-y-3 text-sm text-slate-700 leading-relaxed">
+            <li class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/70">
+              <strong class="text-slate-900 block mb-0.5">1. Sepanduk Pengepala (Canva Banner)</strong>
+              Bina sepanduk bertema keselamatan dan etika digital dalam <strong>Canva</strong> menggunakan gabungan warna biru lembut, hijau jed dan aksen kuning gading dengan tipografi yang jelas serta kontras tinggi.
+            </li>
+            <li class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/70">
+              <strong class="text-slate-900 block mb-0.5">2. Kad Ikon &amp; Infografik Ringkas</strong>
+              Gunakan ikon visual yang seragam (mangga kunci privasi, perisai keselamatan, ikon AI dan ikon semak fakta) agar murid mudah mengimbas setiap amalan tanpa teks berlebihan.
+            </li>
+            <li class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/70">
+              <strong class="text-slate-900 block mb-0.5">3. Struktur Modul Boleh Runtuh &amp; Embed Canva</strong>
+              Susun kandungan mengikut blok yang kemas dan benamkan (*embed*) poster infografik Canva serta pautan rujukan rasmi terus ke halaman <em>'Etika &amp; Keselamatan Siber'</em> di Google Sites.
+            </li>
+          </ul>
+        </div>
+
+        <!-- Reference Sources -->
+        <div class="bg-white rounded-3xl border border-slate-200 p-6 sm:p-7 shadow-sm space-y-4">
+          <div class="flex items-center gap-2.5">
+            <span class="w-9 h-9 rounded-xl bg-indigo-100 text-indigo-800 flex items-center justify-center font-bold text-sm">📚</span>
+            <div>
+              <span class="text-[11px] font-bold uppercase tracking-wider text-indigo-700">Rujukan Akademik &amp; Perundangan</span>
+              <h3 class="text-lg font-extrabold text-slate-900">Sumber Rujukan Panduan</h3>
+            </div>
+          </div>
+
+          <ul class="space-y-2.5 text-sm text-slate-700 leading-relaxed list-disc pl-5">
+            <li>
+              <strong>Akta Komunikasi dan Multimedia 1998 (Akta 588)</strong>, Suruhanjaya Komunikasi dan Multimedia Malaysia (MCMC).
+            </li>
+            <li>
+              <strong>Akta Perlindungan Data Peribadi 2010 (Akta 709)</strong>, Kerajaan Malaysia (PDPA).
+            </li>
+            <li>
+              <strong>International Society for Technology in Education (ISTE)</strong>. (2023). <em>ISTE Standards for Students: Digital Citizen</em>.
+            </li>
+            <li>
+              <strong>Suruhanjaya Komunikasi dan Multimedia Malaysia (MCMC)</strong>. (t.t.). <em>Portal Rasmi Klik Dengan Bijak (KDB)</em>. https://www.klikdenganbijak.my/
+            </li>
+            <li>
+              <strong>UNESCO</strong>. (2023). <em>Guidance for generative AI in education and research</em>. UNESCO Publishing.
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. TUGASAN 2: KLINIK RUMUSAN TREND, ISU & CABARAN -->
+    <section id="tugasan-2" class="scroll-mt-24 space-y-6">
+      <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 sm:p-8 space-y-6">
+        <div class="space-y-2 max-w-3xl">
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-teal-100 text-teal-800">
+            Tugasan 2 • Klinik Rumusan
+          </span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">
+            Klinik Rumusan Trend, Isu &amp; Cabaran Pengintegrasian Teknologi
+          </h2>
+          <p class="text-slate-600 text-sm sm:text-base leading-relaxed">
+            Pilih tab di bawah untuk meneliti analisis cabaran utama pengintegrasian teknologi dalam PdP, contoh pemerhatian atau pengalaman praktikum, serta strategi praktikal bagi mengatasinya.
+          </p>
+        </div>
+
+        <!-- Interactive Tabs for 4 Key Challenge Categories -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5" role="tablist" aria-label="Kategori cabaran pengintegrasian teknologi">
+          <button
+            type="button"
+            role="tab"
+            aria-selected="true"
+            data-tab="guru"
+            class="challenge-tab px-4 py-3 rounded-2xl text-left text-xs sm:text-sm font-bold bg-indigo-700 text-white shadow-sm cursor-pointer transition-all"
+          >
+            👩‍🏫 Kesediaan Guru
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected="false"
+            data-tab="murid"
+            class="challenge-tab px-4 py-3 rounded-2xl text-left text-xs sm:text-sm font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer transition-all"
+          >
+            🎒 Kesediaan Murid
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected="false"
+            data-tab="infrastruktur"
+            class="challenge-tab px-4 py-3 rounded-2xl text-left text-xs sm:text-sm font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer transition-all"
+          >
+            🌐 Infrastruktur Teknologi
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected="false"
+            data-tab="mbpk"
+            class="challenge-tab px-4 py-3 rounded-2xl text-left text-xs sm:text-sm font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer transition-all"
+          >
+            ♿ Murid Berkeperluan Pendidikan Khas
+          </button>
+        </div>
+
+        <!-- Active Challenge Panel -->
+        <div id="challenge-panel" class="rounded-2xl bg-slate-50 border border-slate-200 p-5 sm:p-7">
+          <!-- Populated dynamically via JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. KUIZ FORMATIF (TOPIK 1–8) -->
+    <section id="kuiz-formatif" class="scroll-mt-24 space-y-6">
+      <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 sm:p-8 space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-100 pb-5">
+          <div class="space-y-1.5">
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-100 text-amber-800">
+              Penilaian Formatif • Topik 1–8
+            </span>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">
+              Kuiz Formatif Rumusan Keseluruhan Kursus
+            </h2>
+            <p class="text-slate-600 text-sm">
+              Jawab 5 soalan aneka pilihan di bawah untuk menguji pemahaman konsep teknologi pendidikan, reka bentuk pengajaran, media digital, AI dan etika siber.
+            </p>
+          </div>
+
+          <div class="bg-indigo-50 border border-indigo-200 rounded-2xl px-4 py-3 text-center shrink-0">
+            <span class="block text-[11px] font-bold uppercase tracking-wider text-indigo-700">Skor Semasa</span>
+            <span id="quiz-score-display" class="text-2xl font-extrabold text-indigo-950">0 / 5</span>
+          </div>
+        </div>
+
+        <!-- Quiz Questions Container -->
+        <div id="quiz-container" class="space-y-5">
+          <!-- Populated dynamically via JS -->
+        </div>
+
+        <!-- Reset Quiz Action -->
+        <div class="pt-2 flex flex-wrap items-center justify-between gap-3">
+          <p id="quiz-summary-message" class="text-sm font-semibold text-slate-600">
+            Pilih jawapan bagi setiap soalan untuk melihat maklum balas penerangan segera.
+          </p>
+          <button
+            id="btn-reset-quiz"
+            type="button"
+            class="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold cursor-pointer transition-colors"
+          >
+            Set Semula Kuiz
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. RUMUSAN KESELURUHAN KURSUS -->
+    <section id="rumusan" class="scroll-mt-24">
+      <div class="rounded-3xl bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white p-6 sm:p-10 shadow-lg border border-white/10 space-y-4">
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-teal-400/20 text-teal-200 border border-teal-300/30">
+          Rumusan Keseluruhan Kursus (Topik 1 – Topik 8)
+        </span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold">
+          Sintesis Pengintegrasian Teknologi dalam Pengajaran &amp; Pembelajaran
+        </h2>
+        <p class="text-slate-200 text-sm sm:text-base leading-relaxed max-w-4xl">
+          Pengintegrasian teknologi dalam PdP bukan sekadar penggunaan peranti atau aplikasi canggih, sebaliknya menuntut keseimbangan antara kemahiran pedagogi, penguasaan kandungan, literasi digital, dan kepekaan terhadap keperluan setiap murid. Melalui pemahaman terhadap kerangka reka bentuk pengajaran, pemilihan media yang tepat, pematuhan etika siber, serta kesediaan menangani cabaran infrastruktur dan kepelbagaian murid, guru dapat mewujudkan ekosistem pembelajaran abad ke-21 yang inklusif, selamat, dan bermakna.
+        </p>
+      </div>
+    </section>
+
+    <!-- 7. AI CHATBOX (PEMBANTU TUTORIAL EDUP6023) — IN-PAGE SECTION -->
+    <section id="ai-chatbox" class="scroll-mt-24 space-y-5">
+      <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 sm:p-8 space-y-5">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-slate-100 pb-4">
+          <div class="space-y-1">
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-teal-100 text-teal-800">
+              Pembantu AI • EDUP6023
+            </span>
+            <h2 class="text-2xl font-extrabold text-slate-900">
+              AI Chatbox: Pembantu Tutorial EDUP6023
+            </h2>
+            <p class="text-slate-600 text-sm">
+              Tanya mengenai etika digital, plagiarisme, AI generatif dalam PdP, strategi mengatasi cabaran bilik darjah, atau ringkasan Topik 1–8.
+            </p>
+          </div>
+          <button
+            id="btn-clear-chat-inline"
+            type="button"
+            class="self-start sm:self-auto px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold cursor-pointer transition-colors"
+          >
+            Bersihkan Perbualan
+          </button>
+        </div>
+
+        <!-- Quick Prompt Chips -->
+        <div class="flex flex-wrap gap-2" aria-label="Gesaan pantas AI Chatbox">
+          <button type="button" data-quick-prompt="Beri 5 amalan digital selamat dan beretika untuk murid di bilik darjah." class="quick-prompt-btn px-3 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-800 text-xs font-semibold border border-indigo-200/70 cursor-pointer transition-colors">
+            5 Amalan Etika Digital Bilik Darjah
+          </button>
+          <button type="button" data-quick-prompt="Bagaimana menggunakan AI generatif secara beretika dalam tugasan dan PdP?" class="quick-prompt-btn px-3 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-800 text-xs font-semibold border border-indigo-200/70 cursor-pointer transition-colors">
+            Etika AI Generatif dalam PdP
+          </button>
+          <button type="button" data-quick-prompt="Cadangkan strategi mengatasi isu infrastruktur dan murid berkeperluan khas." class="quick-prompt-btn px-3 py-1.5 rounded-xl bg-teal-50 hover:bg-teal-100 text-teal-800 text-xs font-semibold border border-teal-200/70 cursor-pointer transition-colors">
+            Strategi Infrastruktur &amp; MBPK
+          </button>
+          <button type="button" data-quick-prompt="Ringkaskan konsep TPACK dan ADDIE untuk rumusan Topik 1 hingga 8." class="quick-prompt-btn px-3 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-900 text-xs font-semibold border border-amber-200/70 cursor-pointer transition-colors">
+            Ringkasan TPACK &amp; ADDIE
+          </button>
+        </div>
+
+        <!-- Inline Chat Message Stream -->
+        <div id="chat-messages-inline" class="h-80 sm:h-96 overflow-y-auto rounded-2xl bg-slate-50 border border-slate-200 p-4 space-y-3.5" aria-live="polite">
+          <!-- Messages rendered by JS -->
+        </div>
+
+        <!-- Inline Chat Input Form -->
+        <form id="chat-form-inline" class="flex items-center gap-2.5">
+          <label for="chat-input-inline" class="sr-only">Taip soalan anda kepada Pembantu Tutorial EDUP6023</label>
+          <input
+            id="chat-input-inline"
+            type="text"
+            placeholder="Taip soalan anda tentang Topik 8 atau PdP..."
+            class="flex-1 rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600"
+            required
+          />
+          <button
+            type="submit"
+            class="px-5 py-3 rounded-xl bg-indigo-700 hover:bg-indigo-800 text-white text-sm font-bold shadow-sm cursor-pointer transition-colors shrink-0"
+          >
+            Hantar
+          </button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-slate-950 text-slate-300 border-t border-white/10 py-8 px-4 sm:px-6 lg:px-8 mt-12">
+    <div class="mx-auto max-w-7xl flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
+      <p>
+        <strong class="text-white">EDUP6023</strong> — Teknologi untuk Pengajaran &amp; Pembelajaran (Topik 8: Trend Teknologi, Isu dan Cabaran Pengintegrasian Teknologi dalam PdP).
+      </p>
+      <div class="flex items-center gap-4">
+        <a href="#utama" class="hover:text-white transition-colors">Utamanya</a>
+        <a href="#tugasan-1" class="hover:text-white transition-colors">Tugasan 1</a>
+        <a href="#tugasan-2" class="hover:text-white transition-colors">Tugasan 2</a>
+        <a href="#ai-chatbox" class="text-teal-300 hover:text-teal-200 transition-colors">AI Chatbox</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- FLOATING AI CHATBOX WIDGET AT BOTTOM-RIGHT -->
+  <div id="floating-chat-root" class="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50">
+    <!-- Floating Chat Window -->
+    <div
+      id="floating-chat-panel"
+      class="hidden mb-3 w-[calc(100vw-2rem)] sm:w-96 rounded-2xl bg-white border border-slate-200 shadow-2xl overflow-hidden flex flex-col"
+      role="dialog"
+      aria-label="Pembantu Tutorial EDUP6023 Terapung"
+    >
+      <div class="bg-slate-900 text-white px-4 py-3 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-teal-400"></span>
+          <div>
+            <p class="text-xs font-extrabold">Pembantu Tutorial EDUP6023</p>
+            <p class="text-[10px] text-slate-300">Topik 8 • Etika, Cabaran &amp; Rumusan PdP</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <button
+            id="btn-clear-chat-floating"
+            type="button"
+            class="px-2 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-[11px] font-semibold cursor-pointer"
+            title="Bersihkan Chat"
+          >
+            Padam
+          </button>
+          <button
+            id="btn-close-floating-chat"
+            type="button"
+            class="w-7 h-7 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center text-xs font-bold cursor-pointer"
+            aria-label="Tutup tetingkap AI Chatbox"
+          >
+            ✕
+          </button>
+        </div>
+      </div>
+
+      <div id="chat-messages-floating" class="h-72 overflow-y-auto p-3.5 space-y-3 bg-slate-50" aria-live="polite">
+        <!-- Synced with shared chat history -->
+      </div>
+
+      <form id="chat-form-floating" class="p-2.5 bg-white border-t border-slate-200 flex items-center gap-2">
+        <label for="chat-input-floating" class="sr-only">Taip soalan di tetingkap terapung</label>
+        <input
+          id="chat-input-floating"
+          type="text"
+          placeholder="Tanya tentang Topik 8..."
+          class="flex-1 rounded-xl border border-slate-300 px-3 py-2 text-xs sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-600"
+          required
+        />
+        <button
+          type="submit"
+          class="px-3.5 py-2 rounded-xl bg-indigo-700 hover:bg-indigo-800 text-white text-xs font-bold cursor-pointer"
+        >
+          Kirim
+        </button>
+      </form>
+    </div>
+
+    <!-- Toggle Button -->
+    <button
+      id="btn-toggle-floating-chat"
+      type="button"
+      aria-expanded="false"
+      aria-controls="floating-chat-panel"
+      class="ml-auto flex items-center gap-2 px-4 py-3 rounded-full bg-indigo-700 hover:bg-indigo-800 text-white font-bold text-xs sm:text-sm shadow-xl border border-white/20 cursor-pointer transition-transform hover:scale-105"
+    >
+      <span aria-hidden="true">💬</span>
+      <span>AI Chatbox</span>
+    </button>
+  </div>
+
+  <!-- APPLICATION JAVASCRIPT -->
+  <script>
+    (function () {
+      'use strict';
+
+      // =====================================================================
+      // 1. KINETIC HOMEPAGE CANVAS & MOTION CONTROLS
+      // =====================================================================
+      const canvas = document.getElementById('kinetic-canvas');
+      const ctx = canvas.getContext('2d');
+      const heroSection = document.getElementById('utama');
+
+      const btnPlayPause = document.getElementById('btn-play-pause');
+      const playPauseIcon = document.getElementById('play-pause-icon');
+      const playPauseLabel = document.getElementById('play-pause-label');
+      const btnSpeed = document.getElementById('btn-speed');
+      const speedLabel = document.getElementById('speed-label');
+      const btnBurst = document.getElementById('btn-burst');
+      const btnReducedMotion = document.getElementById('btn-reduced-motion');
+      const reducedMotionLabel = document.getElementById('reduced-motion-label');
+      const interactionHint = document.getElementById('interaction-hint');
+
+      const prefersReducedOS = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      let reducedMotion = Boolean(prefersReducedOS);
+      let isPlaying = !reducedMotion;
+
+      const speeds = [1.0, 1.65, 2.3];
+      let speedIdx = 0;
+
+      let width = heroSection.clientWidth || window.innerWidth;
+      let height = heroSection.clientHeight || Math.round(window.innerHeight * 0.85);
+      let dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+      const pointer = {
+        x: width * 0.5,
+        y: height * 0.5,
+        active: false
+      };
+
+      const particleColors = ['#a5b4fc', '#5eead4', '#fde68a', '#818cf8', '#2dd4bf'];
+      let nodes = [];
+      let bursts = [];
+      let rafId = null;
+      let timeTick = 0;
+
+      function createNode(index, total) {
+        const angle = (index / total) * Math.PI * 2;
+        const baseSpeed = 0.35 + (index % 5) * 0.12;
+        return {
+          x: Math.random() * width,
+          y: Math.random() * height,
+          vx: Math.cos(angle) * baseSpeed,
+          vy: Math.sin(angle) * baseSpeed,
+          radius: 2 + (index % 4) * 1.15,
+          color: particleColors[index % particleColors.length],
+          phase: Math.random() * Math.PI * 2
+        };
+      }
+
+      function initNodes() {
+        const count = Math.max(24, Math.min(60, Math.floor((width * height) / 24000)));
+        nodes = Array.from({ length: count }, (_, idx) => createNode(idx, count));
+      }
+
+      function resizeCanvas() {
+        width = heroSection.clientWidth || window.innerWidth;
+        height = heroSection.clientHeight || Math.round(window.innerHeight * 0.85);
+        dpr = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = Math.round(width * dpr);
+        canvas.height = Math.round(height * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        if (!pointer.active) {
+          pointer.x = width * 0.5;
+          pointer.y = height * 0.5;
+        }
+        initNodes();
+      }
+
+      function spawnBurst(cx, cy) {
+        const originX = typeof cx === 'number' ? cx : (pointer.active ? pointer.x : width * 0.5);
+        const originY = typeof cy === 'number' ? cy : (pointer.active ? pointer.y : height * 0.5);
+
+        const particleCount = 34;
+        for (let i = 0; i < particleCount; i += 1) {
+          const theta = (i / particleCount) * Math.PI * 2 + (Math.random() - 0.5) * 0.2;
+          const speed = 2 + Math.random() * 4.5;
+          bursts.push({
+            x: originX,
+            y: originY,
+            vx: Math.cos(theta) * speed,
+            vy: Math.sin(theta) * speed,
+            size: 2.2 + Math.random() * 2.8,
+            alpha: 1,
+            decay: 0.018 + Math.random() * 0.012,
+            color: particleColors[i % particleColors.length]
+          });
+        }
+
+        nodes.forEach(n => {
+          const dx = n.x - originX;
+          const dy = n.y - originY;
+          const dist = Math.hypot(dx, dy) || 1;
+          const impulse = Math.min(6.5, 220 / dist);
+          n.vx += (dx / dist) * impulse;
+          n.vy += (dy / dist) * impulse;
+        });
+
+        if (reducedMotion) {
+          reducedMotion = false;
+          isPlaying = true;
+          applyMotionState();
+        } else if (!isPlaying) {
+          isPlaying = true;
+          applyMotionState();
+        }
+        startLoop();
+      }
+
+      function applyMotionState() {
+        const mult = speeds[speedIdx];
+        speedLabel.textContent = `${mult.toFixed(2)}x`.replace('.00x', '.0x');
+
+        const rootStyle = document.documentElement.style;
+        const safeMult = Math.max(mult, 0.5);
+        rootStyle.setProperty('--orbit-cw-dur', `${(28 / safeMult).toFixed(1)}s`);
+        rootStyle.setProperty('--orbit-ccw-dur', `${(40 / safeMult).toFixed(1)}s`);
+        rootStyle.setProperty('--wave-dur', `${(9 / safeMult).toFixed(1)}s`);
+        rootStyle.setProperty('--wave-dur-alt', `${(11 / safeMult).toFixed(1)}s`);
+        rootStyle.setProperty('--float-dur', `${(4.6 / safeMult).toFixed(1)}s`);
+
+        document.body.classList.toggle('motion-reduced', reducedMotion);
+        document.body.classList.toggle('motion-paused', !reducedMotion && !isPlaying);
+
+        btnReducedMotion.setAttribute('aria-pressed', String(reducedMotion));
+        if (reducedMotion) {
+          reducedMotionLabel.textContent = 'Kurang Gerakan: Aktif';
+          btnReducedMotion.classList.add('bg-amberWarm-200', 'text-slate-950');
+          btnReducedMotion.classList.remove('bg-slate-900', 'text-indigoEdu-300');
+          playPauseIcon.textContent = '▶';
+          playPauseLabel.textContent = 'Main';
+          btnPlayPause.setAttribute('aria-pressed', 'true');
+          interactionHint.textContent = 'Mod kurang gerakan aktif • Tekan Ledakan atau Main untuk animasi';
+        } else {
+          reducedMotionLabel.textContent = 'Kurang Gerakan';
+          btnReducedMotion.classList.remove('bg-amberWarm-200', 'text-slate-950');
+          btnReducedMotion.classList.add('bg-slate-900', 'text-indigoEdu-300');
+
+          if (isPlaying) {
+            playPauseIcon.textContent = '❚❚';
+            playPauseLabel.textContent = 'Jeda';
+            btnPlayPause.setAttribute('aria-pressed', 'false');
+            interactionHint.textContent = 'Gerakkan kursor atau sentuh kawasan animasi untuk berinteraksi dengan partikel & gelombang';
+          } else {
+            playPauseIcon.textContent = '▶';
+            playPauseLabel.textContent = 'Main';
+            btnPlayPause.setAttribute('aria-pressed', 'true');
+            interactionHint.textContent = 'Animasi dijeda • Klik Main atau Ledakan untuk menyambung gerakan';
+          }
+        }
+      }
+
+      function renderFrame() {
+        ctx.clearRect(0, 0, width, height);
+        const speedMult = (!reducedMotion && isPlaying) ? speeds[speedIdx] : 0;
+
+        if (speedMult > 0) {
+          timeTick += 0.016 * speedMult;
+        }
+
+        // Draw subtle interactive wave line
+        ctx.save();
+        ctx.beginPath();
+        const waveBaseY = height * 0.78;
+        const pointerInfluenceY = pointer.active ? ((pointer.y - height * 0.5) * 0.14) : 0;
+        const steps = 48;
+        for (let s = 0; s <= steps; s += 1) {
+          const t = s / steps;
+          const x = t * width;
+          const y =
+            waveBaseY +
+            pointerInfluenceY +
+            Math.sin(t * Math.PI * 3 + timeTick * 1.4) * 16 +
+            Math.cos(t * Math.PI * 5 - timeTick * 0.9) * 8;
+          if (s === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = 'rgba(94, 234, 212, 0.25)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.restore();
+
+        const linkDist = Math.min(150, Math.max(100, width * 0.11));
+
+        for (let i = 0; i < nodes.length; i += 1) {
+          const n = nodes[i];
+
+          if (speedMult > 0) {
+            n.phase += 0.02 * speedMult;
+            n.x += n.vx * speedMult + Math.cos(n.phase) * 0.16 * speedMult;
+            n.y += n.vy * speedMult + Math.sin(n.phase) * 0.16 * speedMult;
+
+            if (pointer.active) {
+              const pdx = pointer.x - n.x;
+              const pdy = pointer.y - n.y;
+              const pDist = Math.hypot(pdx, pdy) || 1;
+              if (pDist < 190) {
+                n.vx += (pdx / pDist) * 0.05 * speedMult;
+                n.vy += (pdy / pDist) * 0.05 * speedMult;
+              }
+            }
+
+            const spd = Math.hypot(n.vx, n.vy);
+            if (spd > 2.6) {
+              n.vx = (n.vx / spd) * 2.6;
+              n.vy = (n.vy / spd) * 2.6;
+            } else if (spd > 0.85) {
+              n.vx *= 0.985;
+              n.vy *= 0.985;
+            }
+
+            if (n.x < 12) { n.x = 12; n.vx = Math.abs(n.vx); }
+            else if (n.x > width - 12) { n.x = width - 12; n.vx = -Math.abs(n.vx); }
+
+            if (n.y < 12) { n.y = 12; n.vy = Math.abs(n.vy); }
+            else if (n.y > height - 12) { n.y = height - 12; n.vy = -Math.abs(n.vy); }
+          }
+
+          for (let j = i + 1; j < nodes.length; j += 1) {
+            const m = nodes[j];
+            const dist = Math.hypot(n.x - m.x, n.y - m.y);
+            if (dist < linkDist) {
+              const alpha = (1 - dist / linkDist) * 0.22;
+              ctx.strokeStyle = `rgba(165, 180, 252, ${alpha.toFixed(3)})`;
+              ctx.lineWidth = 1;
+              ctx.beginPath();
+              ctx.moveTo(n.x, n.y);
+              ctx.lineTo(m.x, m.y);
+              ctx.stroke();
+            }
+          }
+
+          ctx.beginPath();
+          ctx.arc(n.x, n.y, n.radius, 0, Math.PI * 2);
+          ctx.fillStyle = n.color;
+          ctx.fill();
+        }
+
+        for (let b = bursts.length - 1; b >= 0; b -= 1) {
+          const p = bursts[b];
+          if (speedMult > 0) {
+            p.x += p.vx * Math.max(speedMult, 0.8);
+            p.y += p.vy * Math.max(speedMult, 0.8);
+            p.vx *= 0.965;
+            p.vy *= 0.965;
+            p.alpha -= p.decay * Math.max(speedMult, 0.8);
+          }
+
+          if (p.alpha <= 0) {
+            bursts.splice(b, 1);
+            continue;
+          }
+
+          ctx.save();
+          ctx.globalAlpha = Math.max(0, p.alpha);
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fillStyle = p.color;
+          ctx.fill();
+          ctx.restore();
+        }
+      }
+
+      function step() {
+        renderFrame();
+        if (!reducedMotion && (isPlaying || bursts.length > 0)) {
+          rafId = window.requestAnimationFrame(step);
+        } else {
+          rafId = null;
+        }
+      }
+
+      function startLoop() {
+        if (rafId !== null) {
+          window.cancelAnimationFrame(rafId);
+          rafId = null;
+        }
+        if (!reducedMotion && (isPlaying || bursts.length > 0)) {
+          rafId = window.requestAnimationFrame(step);
+        } else {
+          renderFrame();
+        }
+      }
+
+      btnPlayPause.addEventListener('click', () => {
+        if (reducedMotion) {
+          reducedMotion = false;
+          isPlaying = true;
+        } else {
+          isPlaying = !isPlaying;
+        }
+        applyMotionState();
+        startLoop();
+      });
+
+      btnSpeed.addEventListener('click', () => {
+        speedIdx = (speedIdx + 1) % speeds.length;
+        if (reducedMotion) {
+          reducedMotion = false;
+          isPlaying = true;
+        } else if (!isPlaying) {
+          isPlaying = true;
+        }
+        applyMotionState();
+        startLoop();
+      });
+
+      btnBurst.addEventListener('click', () => {
+        spawnBurst(width * 0.5, height * 0.5);
+      });
+
+      btnReducedMotion.addEventListener('click', () => {
+        reducedMotion = !reducedMotion;
+        if (reducedMotion) {
+          isPlaying = false;
+          bursts = [];
+        } else {
+          isPlaying = true;
+        }
+        applyMotionState();
+        startLoop();
+      });
+
+      heroSection.addEventListener('pointermove', (e) => {
+        const rect = heroSection.getBoundingClientRect();
+        pointer.x = e.clientX - rect.left;
+        pointer.y = e.clientY - rect.top;
+        pointer.active = true;
+      }, { passive: true });
+
+      heroSection.addEventListener('pointerdown', (e) => {
+        const rect = heroSection.getBoundingClientRect();
+        const lx = e.clientX - rect.left;
+        const ly = e.clientY - rect.top;
+        pointer.x = lx;
+        pointer.y = ly;
+        pointer.active = true;
+        if (!e.target.closest('a, button')) {
+          spawnBurst(lx, ly);
+        }
+      }, { passive: true });
+
+      heroSection.addEventListener('pointerleave', () => {
+        pointer.active = false;
+      });
+
+      window.addEventListener('resize', () => {
+        resizeCanvas();
+        renderFrame();
+      });
+
+      resizeCanvas();
+      applyMotionState();
+      startLoop();
+
+      // =====================================================================
+      // 2. TUGASAN 1: 6 AMALAN DIGITAL SELAMAT & BERETIKA
+      // =====================================================================
+      const ethicsPractices = [
+        {
+          id: 'amalan-1',
+          num: '01',
+          category: 'intelegens',
+          categoryLabel: 'Harta Intelek & AI',
+          title: 'Penghormatan Hak Harta Intelek & Pencegahan Plagiarisme',
+          issues: 'Hak cipta, plagiarisme bahan digital, penggunaan gambar/audio/video berhak cipta tanpa izin atau kredit.',
+          guidelines: 'Sentiasa sertakan sitasi atau kredit kepada pemilik asal bahan digital. Utamakan sumber berlesen terbuka (Creative Commons) dan bimbing murid menyemak keaslian tugasan.'
+        },
+        {
+          id: 'amalan-2',
+          num: '02',
+          category: 'intelegens',
+          categoryLabel: 'Harta Intelek & AI',
+          title: 'Penggunaan Kecerdasan Buatan (AI) Generatif secara Beretika',
+          issues: 'Ketelusan akademik, kebergantungan melampau kepada AI, risiko halusinasi maklumat atau ketidaktepatan fakta.',
+          guidelines: 'Gunakan AI generatif sebagai alat sumbang saran, penjanaan idea atau pemudah cara pembelajaran—bukan pengganti pemikiran kritis. Nyatakan bantuan AI secara telus dan sahkan fakta.'
+        },
+        {
+          id: 'amalan-3',
+          num: '03',
+          category: 'privasi',
+          categoryLabel: 'Privasi & Maklumat',
+          title: 'Perlindungan Privasi & Keselamatan Data Peribadi',
+          issues: 'Pendedahan data peribadi murid (nama penuh, no. KP, alamat, foto tanpa kebenaran), risiko pencerobohan akaun dan pematuhan PDPA.',
+          guidelines: 'Elakkan memuat naik maklumat sensitif murid ke platform terbuka atau media sosial awam. Gunakan kata laluan yang kuat dan aktifkan pengesahan dua faktor (2FA) pada akaun pembelajaran.'
+        },
+        {
+          id: 'amalan-4',
+          num: '04',
+          category: 'privasi',
+          categoryLabel: 'Privasi & Maklumat',
+          title: 'Pencegahan Penyebaran Maklumat Palsu',
+          issues: 'Berita palsu (fake news), salah maklumat (misinformation), manipulasi imej/video serta rujukan tidak sahih dalam tugasan.',
+          guidelines: 'Latih murid menyemak sumber, tarikh, konteks dan bukti silang (seperti portal rasmi atau semakan fakta) sebelum berkongsi pautan atau menggunakannya dalam PdP.'
+        },
+        {
+          id: 'amalan-5',
+          num: '05',
+          category: 'kesejahteraan',
+          categoryLabel: 'Komunikasi & Kesejahteraan',
+          title: 'Komunikasi Siber Berhemah & Pencegahan Buli Siber',
+          issues: 'Komen menyakitkan hati, buli siber dalam forum/sembang kelas dalam talian, provokasi dan gangguan digital.',
+          guidelines: 'Tetapkan etika komunikasi (netiquette) yang hormat dalam ruang pembelajaran digital dan sediakan saluran pelaporan selamat jika berlaku buli atau gangguan siber.'
+        },
+        {
+          id: 'amalan-6',
+          num: '06',
+          category: 'kesejahteraan',
+          categoryLabel: 'Komunikasi & Kesejahteraan',
+          title: 'Kesejahteraan Digital & Keselamatan Peranti',
+          issues: 'Keletihan skrin, gangguan fokus, pautan pancingan data (phishing) dan perisian hasad (malware).',
+          guidelines: 'Rancang tempoh penggunaan skrin yang seimbang dengan aktiviti kolaboratif bilik darjah serta elakkan klik pautan mencurigakan atau muat turun fail tidak berlesen.'
+        }
+      ];
+
+      const completedPractices = new Set();
+      let activeFilter = 'all';
+
+      const ethicsGrid = document.getElementById('ethics-cards-grid');
+      const checklistCountEl = document.getElementById('checklist-count');
+      const checklistBarEl = document.getElementById('checklist-bar');
+
+      function updateChecklistProgress() {
+        const total = ethicsPractices.length;
+        const done = completedPractices.size;
+        const pct = Math.round((done / total) * 100);
+        checklistCountEl.textContent = `${done} / ${total} Selesai`;
+        checklistBarEl.style.width = `${pct}%`;
+      }
+
+      function renderEthicsCards() {
+        const filtered = activeFilter === 'all'
+          ? ethicsPractices
+          : ethicsPractices.filter(item => item.category === activeFilter);
+
+        ethicsGrid.innerHTML = filtered.map(item => {
+          const checked = completedPractices.has(item.id);
+          return `
+            <article class="bg-white rounded-2xl border ${checked ? 'border-teal-400 bg-teal-50/20' : 'border-slate-200'} shadow-sm p-5 flex flex-col justify-between gap-4 transition-all">
+              <div class="space-y-3">
+                <div class="flex items-center justify-between gap-2">
+                  <span class="text-xs font-extrabold px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-800">
+                    #${item.num} • ${item.categoryLabel}
+                  </span>
+                  <label class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      data-practice-id="${item.id}"
+                      class="practice-checkbox w-4 h-4 rounded accent-teal-600 cursor-pointer"
+                      ${checked ? 'checked' : ''}
+                    />
+                    <span>Selesai</span>
+                  </label>
+                </div>
+
+                <h3 class="text-base sm:text-lg font-extrabold text-slate-900 leading-snug">
+                  ${item.title}
+                </h3>
+
+                <div class="rounded-xl bg-amber-50/80 border border-amber-200/80 p-3">
+                  <span class="block text-[11px] font-bold uppercase tracking-wider text-amber-800 mb-0.5">Isu Berkaitan</span>
+                  <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">${item.issues}</p>
+                </div>
+
+                <div class="rounded-xl bg-slate-50 border border-slate-200/80 p-3">
+                  <span class="block text-[11px] font-bold uppercase tracking-wider text-indigo-800 mb-0.5">Garis Panduan Bilik Darjah</span>
+                  <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">${item.guidelines}</p>
+                </div>
+              </div>
+            </article>
+          `;
+        }).join('');
+
+        ethicsGrid.querySelectorAll('.practice-checkbox').forEach(cb => {
+          cb.addEventListener('change', (e) => {
+            const id = e.target.getAttribute('data-practice-id');
+            if (e.target.checked) completedPractices.add(id);
+            else completedPractices.delete(id);
+            updateChecklistProgress();
+            renderEthicsCards();
+          });
+        });
+      }
+
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          activeFilter = btn.getAttribute('data-filter');
+          document.querySelectorAll('.filter-btn').forEach(b => {
+            const isSelected = b.getAttribute('data-filter') === activeFilter;
+            b.className = isSelected
+              ? 'filter-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-indigo-700 text-white cursor-pointer transition-colors'
+              : 'filter-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer transition-colors';
+          });
+          renderEthicsCards();
+        });
+      });
+
+      updateChecklistProgress();
+      renderEthicsCards();
+
+      // =====================================================================
+      // 3. TUGASAN 2: INTERACTIVE CHALLENGE TABS
+      // =====================================================================
+      const challengeData = {
+        guru: {
+          title: 'Kesediaan Guru dalam Pengintegrasian Teknologi',
+          observation: 'Semasa pemerhatian bilik darjah dan praktikum, sebahagian guru masih berasa kurang yakin menggunakan aplikasi interaktif atau alat AI generatif, manakala kekangan masa dan beban tugas pentadbiran menyukarkan penyediaan bahan digital baharu.',
+          strategies: [
+            'Melaksanakan sesi perkongsian rakan sejawat / PLC berbentuk bengkel mikro berfokuskan satu alat digital setiap kali.',
+            'Mewujudkan repositori atau bank templat bahan PdP bersama mengikut panitia bagi mengurangkan masa penyediaan.',
+            'Menggalakkan penggunaan alat bantu yang ringkas dan mesra pengguna sebelum beralih kepada aplikasi kompleks.'
+          ]
+        },
+        murid: {
+          title: 'Kesediaan & Literasi Digital Murid',
+          observation: 'Tahap literasi digital murid berbeza-beza; ada yang mahir menavigasi platform digital, tetapi ada juga yang menghadapi kesukaran teknikal asas atau mudah teralih perhatian kepada permainan dan media sosial semasa aktiviti dalam talian.',
+          strategies: [
+            'Memberikan panduan langkah demi langkah yang jelas serta demonstrasi ringkas sebelum aktiviti digital bermula.',
+            'Menetapkan peraturan penggunaan peranti secara bersama (kontrak kelas digital) dan tugasan berstruktur berasaskan tugasan mikro.',
+            'Menggunakan elemen gamifikasi dan penilaian formatif ringkas untuk mengekalkan penglibatan aktif murid.'
+          ]
+        },
+        infrastruktur: {
+          title: 'Infrastruktur Teknologi & Kesalinghubungan',
+          observation: 'Isu umum termasuk liputan internet yang kurang stabil di kawasan tertentu, jumlah peranti atau komputer riba yang terhad berbanding bilangan murid, serta kelewatan penyelenggaraan peralatan.',
+          strategies: [
+            'Menyediakan versi bahan pembelajaran luar talian (offline-ready) seperti fail PDF, slaid tempatan atau video yang dimuat turun lebih awal.',
+            'Menggunakan pendekatan penggiliran stesen (station rotation) atau tugasan berkumpulan supaya peranti dikongsi secara adil dan berkesan.',
+            'Memastikan aktiviti PdP tidak bergantung sepenuhnya kepada kelajuan internet serentak bagi semua murid.'
+          ]
+        },
+        mbpk: {
+          title: 'Aksesibiliti untuk Murid Berkeperluan Pendidikan Khas (MBPK)',
+          observation: 'Tidak semua bahan atau aplikasi digital direka bentuk dengan mengambil kira keperluan murid berkeperluan khas seperti saiz teks kecil, ketiadaan sari kata audio/video, atau antara muka yang terlalu padat.',
+          strategies: [
+            'Menerapkan prinsip Universal Design for Learning (UDL) melalui pilihan format (teks, audio, visual) dan arahan yang jelas.',
+            'Memanfaatkan ciri aksesibiliti terbina dalam seperti pembaca skrin (screen reader), teks-ke-pertuturan, sari kata, dan kontras warna tinggi.',
+            'Menyesuaikan tahap kesukaran serta tempoh masa tugasan mengikut profil keperluan individu murid.'
+          ]
+        }
+      };
+
+      const challengePanel = document.getElementById('challenge-panel');
+
+      function renderChallengeTab(key) {
+        const data = challengeData[key] || challengeData.guru;
+        challengePanel.innerHTML = `
+          <div class="space-y-5">
+            <h3 class="text-xl font-extrabold text-slate-900">${data.title}</h3>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+              <div class="rounded-2xl bg-white border border-slate-200 p-5 space-y-2">
+                <span class="inline-block text-xs font-bold uppercase tracking-wider text-amber-800 bg-amber-100 px-2.5 py-0.5 rounded-md">
+                  Contoh Pemerhatian / Pengalaman Praktikum
+                </span>
+                <p class="text-sm text-slate-700 leading-relaxed pt-1">${data.observation}</p>
+              </div>
+              <div class="rounded-2xl bg-white border border-slate-200 p-5 space-y-2.5">
+                <span class="inline-block text-xs font-bold uppercase tracking-wider text-teal-800 bg-teal-100 px-2.5 py-0.5 rounded-md">
+                  Strategi Mengatasi Cabaran
+                </span>
+                <ul class="space-y-2 text-sm text-slate-700 leading-relaxed pt-1 list-disc pl-5">
+                  ${data.strategies.map(s => `<li>${s}</li>`).join('')}
+                </ul>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      document.querySelectorAll('.challenge-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          const key = tab.getAttribute('data-tab');
+          document.querySelectorAll('.challenge-tab').forEach(t => {
+            const active = t.getAttribute('data-tab') === key;
+            t.setAttribute('aria-selected', String(active));
+            t.className = active
+              ? 'challenge-tab px-4 py-3 rounded-2xl text-left text-xs sm:text-sm font-bold bg-indigo-700 text-white shadow-sm cursor-pointer transition-all'
+              : 'challenge-tab px-4 py-3 rounded-2xl text-left text-xs sm:text-sm font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer transition-all';
+          });
+          renderChallengeTab(key);
+        });
+      });
+
+      renderChallengeTab('guru');
+
+      // =====================================================================
+      // 4. KUIZ FORMATIF (TOPIK 1–8)
+      // =====================================================================
+      const quizQuestions = [
+        {
+          id: 'q1',
+          topic: 'Topik 1–2 • Kerangka Integrasi',
+          question: 'Apakah fokus utama kerangka TPACK dalam perancangan pengajaran berasaskan teknologi?',
+          options: [
+            'Menggantikan pengajaran guru sepenuhnya dengan perisian automatik',
+            'Menghubungkan pengetahuan Teknologi, Pedagogi dan Kandungan secara kontekstual',
+            'Menilai murid hanya melalui ujian komputer berperingkat',
+            'Memilih aplikasi paling mahal tanpa mengira objektif PdP'
+          ],
+          correctIndex: 1,
+          explanation: 'TPACK (Technological Pedagogical Content Knowledge) menekankan interaksi bermakna antara teknologi, pedagogi dan kandungan mata pelajaran dalam konteks bilik darjah.'
+        },
+        {
+          id: 'q2',
+          topic: 'Topik 3 • Reka Bentuk Pengajaran',
+          question: 'Dalam model reka bentuk pengajaran ADDIE, fasa manakah yang memberi tumpuan kepada pengujian dan penambahbaikan berdasarkan maklum balas?',
+          options: [
+            'Analysis (Analisis)',
+            'Design (Reka Bentuk)',
+            'Implementation (Pelaksanaan)',
+            'Evaluation (Penilaian)'
+          ],
+          correctIndex: 3,
+          explanation: 'Fasa Evaluation menilai keberkesanan bahan dan proses pengajaran serta membantu penambahbaikan berterusan.'
+        },
+        {
+          id: 'q3',
+          topic: 'Topik 4–5 • Media & Sumber Digital',
+          question: 'Mengapakah pemilihan media digital perlu disesuaikan dengan gaya belajar dan objektif pembelajaran?',
+          options: [
+            'Supaya media dapat menyokong pemahaman konsep secara jelas dan berkesan',
+            'Agar semua slaid mempunyai sebanyak mungkin animasi serentak',
+            'Untuk mengelakkan guru daripada menerangkan konsep utama',
+            'Kerana media digital sentiasa lebih baik daripada aktiviti hands-on'
+          ],
+          correctIndex: 0,
+          explanation: 'Pemilihan media yang selari dengan objektif dan keperluan murid membantu memperjelas idea abstrak tanpa membebankan kognitif.'
+        },
+        {
+          id: 'q4',
+          topic: 'Topik 6–7 • Trend Teknologi & AI',
+          question: 'Bagaimanakah guru dapat memanfaatkan AI generatif secara beretika dalam PdP?',
+          options: [
+            'Memuat naik data peribadi murid ke platform umum tanpa kebenaran',
+            'Menjana idea aktiviti, draf rubrik dan menyemak ketepatan maklumat secara kritis',
+            'Meminta murid menyerahkan jawapan AI mentah sebagai hasil kerja sendiri',
+            'Mengabaikan isu ketepatan fakta kerana AI sentiasa betul'
+          ],
+          correctIndex: 1,
+          explanation: 'AI generatif sesuai digunakan untuk penjanaan idea dan draf awal, namun ketelusan akademik, privasi data dan semakan fakta tetap wajib.'
+        },
+        {
+          id: 'q5',
+          topic: 'Topik 8 • Etika, Privasi & Cabaran',
+          question: 'Apakah amalan terbaik apabila menggunakan imej atau bahan rujukan dalam pembentangan atau Google Sites?',
+          options: [
+            'Menghapuskan tanda hak cipta dan mengakui sebagai hasil sendiri',
+            'Menyalin keseluruhan teks tanpa petikan atau rujukan',
+            'Mematuhi syarat lesen penggunaan serta memberikan kredit/sumber yang tepat',
+            'Berkongsi maklumat peribadi rakan kelas secara terbuka'
+          ],
+          correctIndex: 2,
+          explanation: 'Menghormati hak harta intelek, lesen penggunaan dan privasi data merupakan asas kewarganegaraan digital yang beretika.'
+        }
+      ];
+
+      const userAnswers = {};
+      const quizContainer = document.getElementById('quiz-container');
+      const quizScoreDisplay = document.getElementById('quiz-score-display');
+      const quizSummaryMessage = document.getElementById('quiz-summary-message');
+      const btnResetQuiz = document.getElementById('btn-reset-quiz');
+
+      function updateQuizScore() {
+        let score = 0;
+        let answeredCount = 0;
+
+        quizQuestions.forEach(q => {
+          if (typeof userAnswers[q.id] === 'number') {
+            answeredCount += 1;
+            if (userAnswers[q.id] === q.correctIndex) {
+              score += 1;
+            }
+          }
+        });
+
+        quizScoreDisplay.textContent = `${score} / ${quizQuestions.length}`;
+
+        if (answeredCount === 0) {
+          quizSummaryMessage.textContent = 'Pilih jawapan bagi setiap soalan untuk melihat maklum balas penerangan segera.';
+        } else if (answeredCount < quizQuestions.length) {
+          quizSummaryMessage.textContent = `Anda telah menjawab ${answeredCount} daripada ${quizQuestions.length} soalan. Teruskan untuk melengkapkan kuiz.`;
+        } else {
+          quizSummaryMessage.textContent = `Kuiz lengkap! Markah anda: ${score} / ${quizQuestions.length}. ${score >= 4 ? 'Tahniah, pemahaman anda sangat mantap!' : 'Semak penerangan setiap soalan untuk mengukuhkan konsep.'}`;
+        }
+      }
+
+      function renderQuiz() {
+        quizContainer.innerHTML = quizQuestions.map((q, qIdx) => {
+          const chosen = userAnswers[q.id];
+          const hasAnswered = typeof chosen === 'number';
+          const isCorrect = hasAnswered && chosen === q.correctIndex;
+
+          return `
+            <div class="rounded-2xl border border-slate-200 bg-slate-50/70 p-5 space-y-3.5">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <span class="text-xs font-bold text-indigo-700 bg-indigo-100 px-2.5 py-0.5 rounded-md">${q.topic}</span>
+                <span class="text-xs font-bold text-slate-500">Soalan ${qIdx + 1}</span>
+              </div>
+
+              <p class="text-sm sm:text-base font-bold text-slate-900">${q.question}</p>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                ${q.options.map((opt, idx) => {
+                  const letter = ['A', 'B', 'C', 'D'][idx];
+                  let btnStyle = 'bg-white hover:bg-indigo-50/70 border-slate-200 text-slate-800';
+
+                  if (hasAnswered) {
+                    if (idx === q.correctIndex) {
+                      btnStyle = 'bg-teal-50 border-teal-500 text-teal-950 font-bold';
+                    } else if (idx === chosen && idx !== q.correctIndex) {
+                      btnStyle = 'bg-rose-50 border-rose-400 text-rose-900 font-semibold';
+                    } else {
+                      btnStyle = 'bg-white/70 border-slate-200 text-slate-500';
+                    }
+                  }
+
+                  return `
+                    <button
+                      type="button"
+                      data-qid="${q.id}"
+                      data-oidx="${idx}"
+                      class="quiz-option-btn w-full text-left px-3.5 py-2.5 rounded-xl border text-xs sm:text-sm transition-all cursor-pointer flex items-start gap-2.5 ${btnStyle}"
+                    >
+                      <span class="font-extrabold shrink-0">${letter}.</span>
+                      <span>${opt}</span>
+                    </button>
+                  `;
+                }).join('')}
+              </div>
+
+              ${hasAnswered ? `
+                <div class="rounded-xl p-3.5 text-xs sm:text-sm leading-relaxed border ${isCorrect ? 'bg-teal-50 border-teal-200 text-teal-950' : 'bg-amber-50 border-amber-200 text-amber-950'}">
+                  <strong class="block mb-0.5">${isCorrect ? '✓ Jawapan Tepat!' : 'ℹ Penerangan Jawapan:'}</strong>
+                  ${q.explanation}
+                </div>
+              ` : ''}
+            </div>
+          `;
+        }).join('');
+
+        quizContainer.querySelectorAll('.quiz-option-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const qid = btn.getAttribute('data-qid');
+            const oidx = Number(btn.getAttribute('data-oidx'));
+            userAnswers[qid] = oidx;
+            updateQuizScore();
+            renderQuiz();
+          });
+        });
+      }
+
+      btnResetQuiz.addEventListener('click', () => {
+        Object.keys(userAnswers).forEach(k => delete userAnswers[k]);
+        updateQuizScore();
+        renderQuiz();
+      });
+
+      updateQuizScore();
+      renderQuiz();
+
+      // =====================================================================
+      // 5. AI CHATBOX (PEMBANTU TUTORIAL EDUP6023) + GEMINI API + FALLBACK
+      // =====================================================================
+      const inlineMessagesEl = document.getElementById('chat-messages-inline');
+      const floatingMessagesEl = document.getElementById('chat-messages-floating');
+      const inlineFormEl = document.getElementById('chat-form-inline');
+      const floatingFormEl = document.getElementById('chat-form-floating');
+      const inlineInputEl = document.getElementById('chat-input-inline');
+      const floatingInputEl = document.getElementById('chat-input-floating');
+      const btnClearInline = document.getElementById('btn-clear-chat-inline');
+      const btnClearFloating = document.getElementById('btn-clear-chat-floating');
+      const btnToggleFloating = document.getElementById('btn-toggle-floating-chat');
+      const btnCloseFloating = document.getElementById('btn-close-floating-chat');
+      const floatingPanelEl = document.getElementById('floating-chat-panel');
+
+      const WELCOME_MSG = {
+        role: 'assistant',
+        text: 'Halo! Saya Pembantu Tutorial EDUP6023. Anda boleh bertanyakan tentang Amalan Digital Selamat & Beretika (Tugasan 1), cabaran dan strategi pengintegrasian teknologi (Tugasan 2), atau ringkasan Topik 1 hingga 8.'
+      };
+
+      let chatMessages = [WELCOME_MSG];
+      let isTyping = false;
+
+      function escapeHtml(str) {
+        return String(str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      function formatMessageText(raw) {
+        const safe = escapeHtml(raw);
+        return safe
+          .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+          .replace(/\n/g, '<br />');
+      }
+
+      function renderChatContainers() {
+        const buildHtml = (compact) => {
+          const itemsHtml = chatMessages.map(msg => {
+            const isUser = msg.role === 'user';
+            return `
+              <div class="flex ${isUser ? 'justify-end' : 'justify-start'}">
+                <div class="${compact ? 'max-w-[88%] text-xs px-3 py-2' : 'max-w-[85%] text-xs sm:text-sm px-4 py-3'} rounded-2xl leading-relaxed shadow-xs ${
+                  isUser
+                    ? 'bg-indigo-700 text-white rounded-br-sm'
+                    : 'bg-white text-slate-800 border border-slate-200 rounded-bl-sm'
+                }">
+                  ${formatMessageText(msg.text)}
+                </div>
+              </div>
+            `;
+          }).join('');
+
+          const typingHtml = isTyping ? `
+            <div class="flex justify-start">
+              <div class="bg-white border border-slate-200 rounded-2xl rounded-bl-sm px-4 py-3 inline-flex items-center gap-1.5">
+                <span class="typing-dot w-2 h-2 rounded-full bg-indigo-600"></span>
+                <span class="typing-dot w-2 h-2 rounded-full bg-indigo-600"></span>
+                <span class="typing-dot w-2 h-2 rounded-full bg-indigo-600"></span>
+              </div>
+            </div>
+          ` : '';
+
+          return itemsHtml + typingHtml;
+        };
+
+        inlineMessagesEl.innerHTML = buildHtml(false);
+        floatingMessagesEl.innerHTML = buildHtml(true);
+
+        inlineMessagesEl.scrollTop = inlineMessagesEl.scrollHeight;
+        floatingMessagesEl.scrollTop = floatingMessagesEl.scrollHeight;
+      }
+
+      function buildFallbackReply(prompt) {
+        const q = prompt.toLowerCase();
+
+        if (q.includes('etika') || q.includes('plagiar') || q.includes('hak cipta') || q.includes('amalan')) {
+          return '**Amalan Digital Selamat & Beretika (Tugasan 1):**\n1. Hormati hak harta intelek & elakkan plagiarisme dengan kredit sumber dan lesen Creative Commons.\n2. Gunakan AI generatif secara telus serta semak ketepatan fakta.\n3. Lindungi privasi data murid dan aktifkan keselamatan akaun.\n4. Semak kesahihan maklumat sebelum menyebarkannya.\n5. Amalkan komunikasi berhemah, cegah buli siber dan jaga kesejahteraan skrin.';
+        }
+
+        if (q.includes('ai') || q.includes('generatif') || q.includes('chatgpt') || q.includes('gemini')) {
+          return '**Penggunaan AI Generatif secara Beretika dalam PdP:**\n• Gunakan AI untuk menjana idea aktiviti, soalan perbincangan atau draf awal.\n• Jangan menyalin output AI secara bulat-bulat tanpa pemikiran kritis.\n• Jangan memuat naik data peribadi atau maklumat sulit murid ke alat AI.\n• Nyatakan penggunaan AI secara jujur mengikut garis panduan tugasan.';
+        }
+
+        if (q.includes('infrastruktur') || q.includes('mbpk') || q.includes('keperluan khas') || q.includes('cabaran') || q.includes('strategi')) {
+          return '**Strategi Mengatasi Cabaran PdP (Tugasan 2):**\n• **Infrastruktur:** Sediakan bahan mesra luar talian (*offline-ready*) dan gunakan penggiliran stesen jika peranti terhad.\n• **MBPK:** Terapkan *Universal Design for Learning* (UDL) serta ciri pembaca skrin, sari kata dan teks jelas.\n• **Guru & Murid:** Adakan bengkel mikro/PLC dan tetapkan peraturan penggunaan peranti yang jelas.';
+        }
+
+        if (q.includes('tpack') || q.includes('addie') || q.includes('topik 1') || q.includes('ringkas')) {
+          return '**Ringkasan Topik 1–8:**\n• **TPACK** mengintegrasikan pengetahuan Teknologi, Pedagogi dan Kandungan.\n• **ADDIE** merangkumi fasa *Analysis, Design, Development, Implementation, Evaluation*.\n• **Topik 8** menekankan etika digital, keselamatan data, cabaran pelaksanaan PdP dan strategi inklusif.';
+        }
+
+        return '**Panduan Tutorial EDUP6023 (Topik 8):**\nUntuk pengintegrasian teknologi yang berkesan, gabungkan perancangan pedagogi yang jelas (seperti TPACK/ADDIE), pematuhan etika digital dan privasi data, serta strategi mesra murid seperti bahan luar talian dan reka bentuk inklusif (UDL). Anda boleh bertanya lebih spesifik mengenai Tugasan 1, Tugasan 2, atau Kuiz Formatif.';
+      }
+
+      async function fetchGeminiWithBackoff(userText) {
+        const apiKey = '';
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+        const systemPrompt =
+          'Anda ialah Pembantu Tutorial EDUP6023 (Teknologi untuk Pengajaran & Pembelajaran, Topik 8: Trend Teknologi, Isu dan Cabaran Pengintegrasian Teknologi dalam PdP). Jawab dalam Bahasa Melayu yang jelas, berstruktur, mesra akademik, dan ringkas.';
+
+        const historyPayload = chatMessages.slice(-8).map(m => ({
+          role: m.role === 'assistant' ? 'model' : 'user',
+          parts: [{ text: m.text }]
+        }));
+
+        const payload = {
+          contents: historyPayload,
+          systemInstruction: {
+            parts: [{ text: systemPrompt }]
+          }
+        };
+
+        const delays = [1000, 2000, 4000];
+        for (let attempt = 0; attempt <= delays.length; attempt += 1) {
+          try {
+            const response = await fetch(apiUrl, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+              throw new Error(`HTTP ${response.status}`);
+            }
+
+            const result = await response.json();
+            const replyText = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (replyText && replyText.trim()) {
+              return replyText.trim();
+            }
+            throw new Error('Empty response');
+          } catch (err) {
+            if (attempt < delays.length) {
+              await new Promise(resolve => setTimeout(resolve, delays[attempt]));
+            } else {
+              return buildFallbackReply(userText);
+            }
+          }
+        }
+
+        return buildFallbackReply(userText);
+      }
+
+      async function sendChatMessage(text) {
+        const trimmed = text.trim();
+        if (!trimmed || isTyping) return;
+
+        chatMessages.push({ role: 'user', text: trimmed });
+        isTyping = true;
+        renderChatContainers();
+
+        const reply = await fetchGeminiWithBackoff(trimmed);
+        isTyping = false;
+        chatMessages.push({ role: 'assistant', text: reply });
+        renderChatContainers();
+      }
+
+      function clearChatHistory() {
+        if (isTyping) return;
+        chatMessages = [WELCOME_MSG];
+        renderChatContainers();
+      }
+
+      inlineFormEl.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const val = inlineInputEl.value;
+        inlineInputEl.value = '';
+        sendChatMessage(val);
+      });
+
+      floatingFormEl.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const val = floatingInputEl.value;
+        floatingInputEl.value = '';
+        sendChatMessage(val);
+      });
+
+      document.querySelectorAll('.quick-prompt-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const prompt = btn.getAttribute('data-quick-prompt');
+          if (prompt) sendChatMessage(prompt);
+        });
+      });
+
+      btnClearInline.addEventListener('click', clearChatHistory);
+      btnClearFloating.addEventListener('click', clearChatHistory);
+
+      btnToggleFloating.addEventListener('click', () => {
+        const willOpen = floatingPanelEl.classList.contains('hidden');
+        floatingPanelEl.classList.toggle('hidden', !willOpen);
+        btnToggleFloating.setAttribute('aria-expanded', String(willOpen));
+        if (willOpen) {
+          floatingMessagesEl.scrollTop = floatingMessagesEl.scrollHeight;
+        }
+      });
+
+      btnCloseFloating.addEventListener('click', () => {
+        floatingPanelEl.classList.add('hidden');
+        btnToggleFloating.setAttribute('aria-expanded', 'false');
+      });
+
+      renderChatContainers();
+    })();
+  </script>
+</body>
+</html>
+```
